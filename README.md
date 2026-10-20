@@ -14,12 +14,6 @@ The dashboard shows revenue, covers and labour for the current week against the 
 
 Sign in with `admin@revenue.local` and `admin1234`. The API seed creates this account and about 14 months of demo data.
 
-## Screenshots
-
-![Dashboard](docs/screenshots/dashboard.png)
-
-![Admin](docs/screenshots/admin.png)
-
 ## Architecture
 
 Two applications run side by side:
@@ -100,10 +94,6 @@ If the browser runs on another host or port, set `NEXT_PUBLIC_API_URL` to the AP
 
 The repository does not include a browser end-to-end suite. I checked login, week navigation, the four insight tabs, admin CRUD, guards and PNG export with Playwright during development, but those scripts live outside the two application repositories.
 
-## Working with AI
-
-[`docs/ai-usage.md`](docs/ai-usage.md) describes how the project was built with AI assistance: the process, which parts were mine, and the concrete problems that review and verification caught.
-
 ## Features
 
 - Weekly dashboard with previous-period comparison, per-series toggles, event markers and a PNG export.
@@ -137,13 +127,9 @@ The dashboard request stays small. The year-over-year endpoint runs only when th
 ## Project layout
 
 ```text
-revenue-dashboard/
-  docs/
-    ai-usage.md           How AI assistance was used and verified
-    reference/            Design reference images
-    screenshots/          Screenshots used in this README
-  revenue-dashboard-api/  Express API and Prisma schema
-  revenue-dashboard-ui/   Next.js application
+revenue-dashboard/        This repository: the overview
+  revenue-dashboard-api/  Express API and Prisma schema (own repository)
+  revenue-dashboard-ui/   Next.js application (own repository)
 ```
 
 Each application is its own git repository and is ignored by the root one. `.agents/skills/` inside the API holds the three Prisma reference skills this codebase uses; unrelated ones were removed.
@@ -162,4 +148,3 @@ Each application is its own git repository and is ignored by the root one. `.age
 
 - API setup, schema, endpoints and environment variables: [`revenue-dashboard-api/README.md`](revenue-dashboard-api/README.md)
 - UI setup, routes, components and scripts: [`revenue-dashboard-ui/README.md`](revenue-dashboard-ui/README.md)
-- AI-assisted workflow and verification: [`docs/ai-usage.md`](docs/ai-usage.md)
