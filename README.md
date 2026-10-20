@@ -110,7 +110,7 @@ Run these in each repository:
 | UI | `pnpm lint` | ESLint |
 | Both | `pnpm build` | Production build |
 
-Current results: 40 API tests and 22 UI tests pass, and both builds succeed. Neither repository ships a browser test suite; login, navigation, admin CRUD and export were checked by hand in a browser.
+Current results: 43 API tests and 22 UI tests pass, and both builds succeed. Neither repository ships a browser test suite; login, navigation, admin CRUD and export were checked by hand in a browser.
 
 ## Decisions worth explaining
 
