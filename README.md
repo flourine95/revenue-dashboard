@@ -15,7 +15,7 @@ The dashboard shows revenue, covers and labour for one week next to the week bef
 
 ![Admin](screenshots/admin.png)
 
-An interactive diagram of how the three processes fit together is in [architecture.html](architecture.html).
+An interactive diagram of how the three processes fit together is at **[flourine95.github.io/revenue-dashboard/architecture.html](https://flourine95.github.io/revenue-dashboard/architecture.html)**. Every node in it links to the source file it describes.
 
 ## Run it
 
@@ -86,7 +86,7 @@ Browser
 Next.js 16 (port 3000) ──▶ Express 5 API (port 4000) ──▶ PostgreSQL 17 (port 5432)
 ```
 
-[architecture.html](architecture.html) draws the same system with the trust boundary, the two paths out of the browser and the tables behind the API. It opens in a browser with no build step.
+[architecture.html](architecture.html) draws the same system with the trust boundary, the two paths out of the browser and the tables behind the API. Read it live at [flourine95.github.io/revenue-dashboard/architecture.html](https://flourine95.github.io/revenue-dashboard/architecture.html); GitHub shows this file as source, not as a page.
 
 Each application is its own repository:
 

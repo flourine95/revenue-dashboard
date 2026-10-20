@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Revenue Dashboard</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f7f5;
+        --fg: #1a1a1a;
+        --muted: #666;
+        --line: #ddd;
+        --card: #fff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #111;
+          --fg: #eee;
+          --muted: #999;
+          --line: #2a2a2a;
+          --card: #1a1a1a;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 48px 24px 72px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          sans-serif;
+      }
+      main {
+        max-width: 760px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        letter-spacing: -0.02em;
+      }
+      p {
+        margin: 0 0 16px;
+        color: var(--muted);
+      }
+      .links {
+        display: grid;
+        gap: 12px;
+        margin: 32px 0;
+      }
+      a.card {
+        display: block;
+        padding: 16px 20px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--card);
+        color: inherit;
+        text-decoration: none;
+      }
+      a.card:hover {
+        border-color: var(--fg);
+      }
+      a.card strong {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 2px;
+      }
+      a.card span {
+        color: var(--muted);
+        font-size: 14px;
+      }
+      img {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        margin-top: 12px;
+      }
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 0.9em;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Revenue Dashboard</h1>
+      <p>
+        A weekly revenue dashboard for a restaurant group: Express API, Next.js
+        frontend and PostgreSQL.
+      </p>
+
+      <div class="links">
+        <a class="card" href="architecture.html">
+          <strong>Architecture diagram</strong>
+          <span
+            >Interactive: trust boundary, request paths and the tables behind
+            the API.</span
+          >
+        </a>
+        <a
+          class="card"
+          href="https://github.com/flourine95/revenue-dashboard-api"
+        >
+          <strong>API repository</strong>
+          <span>Express 5, Prisma 7, Zod, PostgreSQL 17.</span>
+        </a>
+        <a
+          class="card"
+          href="https://github.com/flourine95/revenue-dashboard-ui"
+        >
+          <strong>UI repository</strong>
+          <span>Next.js 16, React 19, Tailwind 4, Recharts.</span>
+        </a>
+        <a class="card" href="https://github.com/flourine95/revenue-dashboard">
+          <strong>Project README</strong>
+          <span>Setup from a fresh machine, in both repositories.</span>
+        </a>
+      </div>
+
+      <img src="screenshots/dashboard.png" alt="Dashboard screenshot" />
+    </main>
+  </body>
+</html>
