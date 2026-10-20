@@ -1,46 +1,18 @@
 # Revenue Dashboard
 
-A weekly revenue dashboard for a restaurant group. The project has an Express API, a Next.js frontend, a seeded PostgreSQL database, and admin screens for editing the numbers behind the chart.
+A weekly revenue dashboard for a restaurant group, built for a coding challenge. It reads data from a PostgreSQL database through an Express API and renders it in a Next.js app, with admin screens for changing the numbers.
 
-The dashboard shows revenue, covers and labour for the current week against the previous week. It also compares the same week last year, tracks the weekly budget and calculates a performance score. Every chart annotation comes from an event the admin team can create, edit or delete.
+The dashboard shows revenue, covers and labour for one week next to the week before. Three more tabs compare the same week last year, track the weekly budget and score the week. Annotations on the chart are events the admin creates.
 
-## Demo
+## Run it
 
-| Surface    | URL                          |
-| ---------- | ---------------------------- |
-| Dashboard  | http://localhost:3000        |
-| Admin      | http://localhost:3000/admin  |
-| API health | http://localhost:4000/health |
+You need three things before you start:
 
-Sign in with `admin@revenue.local` and `admin1234`. The API seed creates this account and about 14 months of demo data.
+- Node.js 20.19+, 22.12+ or 24+ (22 LTS recommended)
+- pnpm 12.11.2, pinned by `packageManager` in both repositories: `corepack enable && corepack prepare pnpm@12.11.2 --activate`
+- Docker Desktop on macOS or Windows, or Docker Engine with the Compose plugin on Linux
 
-## Architecture
-
-Two applications run side by side:
-
-```text
-Browser
-  │  httpOnly session cookie
-  ▼
-Next.js 16 (port 3000) ──▶ Express 5 API (port 4000) ──▶ PostgreSQL 17 (port 5432)
-```
-
-| Application | Responsibility | Stack |
-| --- | --- | --- |
-| `revenue-dashboard-api` | REST API, session auth, dashboard aggregation, admin CRUD | Express 5, Prisma 7, Zod, PostgreSQL |
-| `revenue-dashboard-ui` | Dashboard, insight tabs, login, admin screens, PNG export | Next.js 16, React 19, Tailwind 4, shadcn/ui, Recharts |
-
-## Run locally
-
-Verified end to end on a clean Linux container (Node 22, no global packages) following only the steps below. macOS works the same way; the Windows note under the API is the only platform-specific instruction.
-
-### Prerequisites
-
-- Node.js 20.19 or newer, 22.12+ or 24+ (22 LTS recommended)
-- pnpm, activated through Corepack: `corepack enable && corepack prepare pnpm@12.11.2 --activate`
-- Docker Desktop (macOS/Windows) or Docker Engine with the Compose plugin (Linux)
-
-### Start the API
+Start the API first. The UI calls it on port 4000.
 
 ```bash
 cd revenue-dashboard-api
@@ -51,25 +23,16 @@ pnpm db:setup
 pnpm dev
 ```
 
-`db:setup` applies the migration, generates the Prisma client and loads the demo data. The API listens on port 4000. On a clean machine this takes about 40 seconds including the dependency install.
+`db:setup` applies the migration, generates the Prisma client and loads about 14 months of demo data. On a fresh machine the whole sequence takes roughly 40 seconds, mostly the dependency install.
 
-Check it is up:
+Confirm the API is listening:
 
 ```bash
 curl http://localhost:4000/health
 # → {"status":"ok","database":"up"}
 ```
 
-<details>
-<summary>Windows note</summary>
-
-If `pnpm dev` prints nothing and does not listen, run the entrypoint directly: `npx tsx src/index.ts`.
-
-</details>
-
-### Start the UI
-
-Open a second terminal:
+Leave that terminal running and open a second one:
 
 ```bash
 cd revenue-dashboard-ui
@@ -78,73 +41,80 @@ cp .env.example .env.local
 pnpm dev
 ```
 
-Open http://localhost:3000 and sign in with the demo account.
+Open http://localhost:3000 and sign in with `admin@revenue.local` and `admin1234`. The seed creates that account.
 
-If the browser runs on another host or port, set `NEXT_PUBLIC_API_URL` to the API origin and update `CORS_ORIGIN` in the API environment.
+If the browser reaches the app on a host or port other than `localhost:3000`, set `NEXT_PUBLIC_API_URL` to the API origin and add the browser origin to `CORS_ORIGIN` in the API `.env`. Otherwise the login request is blocked.
 
-## Tests and checks
+<details>
+<summary>Windows</summary>
 
-| Command | Scope | Current result |
-| --- | --- | --- |
-| `pnpm test` | API unit and endpoint tests, including a throwaway PostgreSQL database | 40 passing |
-| `pnpm test` | UI unit tests for formatting, week ranges, score, chart data and chart scale | 22 passing |
-| `pnpm typecheck` | TypeScript, both applications | passing |
-| `pnpm lint` | ESLint, UI application | passing |
-| `pnpm build` | Production build, both applications | passing |
+If `pnpm dev` prints nothing and never starts listening, run the entrypoint directly with `npx tsx src/index.ts` in the API repository.
 
-The repository does not include a browser end-to-end suite. I checked login, week navigation, the four insight tabs, admin CRUD, guards and PNG export with Playwright during development, but those scripts live outside the two application repositories.
+</details>
 
-## Features
+## What it does
 
-- Weekly dashboard with previous-period comparison, per-series toggles, event markers and a PNG export.
-- Insight tabs for period comparison, year-over-year, budget performance and a composite performance score.
-- Admin screen for daily metrics and events, including create, edit, delete and confirmation dialogs.
-- Server-side session auth with an httpOnly cookie and hashed session tokens.
-- Responsive layout with a light theme by default and a dark theme on the `d` key.
+| Surface | URL |
+| --- | --- |
+| Dashboard | http://localhost:3000 |
+| Admin | http://localhost:3000/admin |
+| API health | http://localhost:4000/health |
 
-## Design decisions
+The dashboard covers a week at a time, with arrows for the week before and after and a control that returns to the current week. Each series (POS revenue, Eatclub revenue, labour cost) can be toggled off. The y-axis holds a 0.75k grid so two weeks can be compared by eye, and the export button saves the card as a PNG.
 
-### Server sessions over JWT
+The admin screens at `/admin` edit one day of metrics at a time and manage the events that appear on the chart. Both routes check the session on the server and send anonymous visitors to `/login`.
 
-The API stores a SHA-256 hash of an opaque token and sends the raw token in an httpOnly cookie. Logout deletes the row, so revocation is immediate.
-
-### Comparison data is always fetched
-
-Toggling “Compare to Previous” only changes what the dashboard renders. The previous period is already in the payload, so the toggle does not trigger a request or change the layout.
-
-### Reserved space prevents layout shift
-
-Comparison text, previous-period legend entries, the “This week” control and the export label keep their space when hidden. The dashboard does not move when a control is pressed.
-
-### Performance score
-
-Revenue against budget is 50% of the score, labour efficiency is 30% and covers momentum is 20%. The formula lives in `revenue-dashboard-ui/lib/score.ts` and has unit tests.
-
-### Year-over-year is lazy
-
-The dashboard request stays small. The year-over-year endpoint runs only when the visitor opens that tab.
-
-## Project layout
+## How the pieces fit
 
 ```text
-revenue-dashboard/        This repository: the overview
-  revenue-dashboard-api/  Express API and Prisma schema (own repository)
-  revenue-dashboard-ui/   Next.js application (own repository)
+Browser
+  │  httpOnly session cookie
+  ▼
+Next.js 16 (port 3000) ──▶ Express 5 API (port 4000) ──▶ PostgreSQL 17 (port 5432)
 ```
 
-Each application is its own git repository and is ignored by the root one. `.agents/skills/` inside the API holds the three Prisma reference skills this codebase uses; unrelated ones were removed.
+Each application is its own repository:
+
+| Repository | Responsibility | Stack |
+| --- | --- | --- |
+| `revenue-dashboard-api` | REST API, session auth, dashboard aggregation, admin CRUD | Express 5, Prisma 7, Zod, PostgreSQL |
+| `revenue-dashboard-ui` | Dashboard, insight tabs, login, admin screens, PNG export | Next.js 16, React 19, Tailwind 4, shadcn/ui, Recharts |
+
+Setup, schema, endpoints and environment variables are in the [API README](https://github.com/flourine95/revenue-dashboard-api). Setup, routes and components are in the [UI README](https://github.com/flourine95/revenue-dashboard-ui).
+
+## Tests
+
+Run these in each repository:
+
+| Repository | Command | Covers |
+| --- | --- | --- |
+| API | `pnpm test` | Period and KPI maths, plus every endpoint against a throwaway PostgreSQL database |
+| API | `pnpm typecheck` | TypeScript |
+| UI | `pnpm test` | Date ranges, formatting, performance score, chart series join and axis scale |
+| UI | `pnpm typecheck` | TypeScript |
+| UI | `pnpm lint` | ESLint |
+| Both | `pnpm build` | Production build |
+
+Current results: 40 API tests and 22 UI tests pass, and both builds succeed. Neither repository ships a browser test suite; login, navigation, admin CRUD and export were checked by hand in a browser.
+
+## Decisions worth explaining
+
+**Sessions, not JWTs.** The API stores a SHA-256 hash of an opaque token and sends the token itself in an httpOnly cookie. Logging out deletes the row, so a session stops working the moment it is revoked.
+
+**The comparison period always travels with the dashboard.** Toggling "Compare to Previous" changes what the chart draws, not what the API returns. The toggle costs no request, and nothing on the page moves.
+
+**Hidden labels keep their space.** Comparison text, the previous-period legend, the current-week control and the export label reserve their room whether or not they are visible, so pressing a control does not reflow the card.
+
+**The score weights revenue first.** Revenue against budget is 50% of the score, labour efficiency 30% and covers momentum 20%. The formula is in `lib/score.ts` with unit tests.
+
+**Year-over-year loads late.** The dashboard request stays small; the year-over-year endpoint runs only when someone opens that tab.
 
 ## Known gaps
 
-- The selected week and active insight tab are not stored in the URL, so a reload returns to the current week.
-- The chart has a text summary for assistive technology but no full data table.
-- The API allows one CORS origin, which is enough for local development.
-- Login lockout counters live in memory, so they reset when the API restarts; a multi-instance deployment would keep them in Redis.
-- The API resolves weeks in UTC, so a visitor in a negative-offset timezone can see the previous week just after midnight on Monday.
-- Demo credentials and seeded data are for local use only.
-- The interface is English-only.
-
-## Where to read next
-
-- API setup, schema, endpoints and environment variables: [revenue-dashboard-api](https://github.com/flourine95/revenue-dashboard-api)
-- UI setup, routes, components and scripts: [revenue-dashboard-ui](https://github.com/flourine95/revenue-dashboard-ui)
+- The selected week and the open tab are not in the URL, so a reload returns to the current week.
+- The chart has a text summary for screen readers but no full data table.
+- The API allows one CORS origin, which is enough to run locally.
+- Failed sign-in counters live in memory and reset when the API restarts. A lockout does not survive a restart or carry across several API instances.
+- A visitor in a negative-offset timezone can see the previous week just after midnight on Monday, because the API resolves weeks in UTC.
+- Demo credentials and seeded data are for local use.
+- The interface is English only.
