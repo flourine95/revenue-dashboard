@@ -25,3 +25,6 @@ Thumbs.db
 .review/
 .workbuddy-ai/
 .vercel
+
+# Archify working folder (the published diagram is architecture.html)
+/.archify/
