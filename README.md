@@ -146,5 +146,5 @@ Each application is its own git repository and is ignored by the root one. `.age
 
 ## Where to read next
 
-- API setup, schema, endpoints and environment variables: [`revenue-dashboard-api/README.md`](revenue-dashboard-api/README.md)
-- UI setup, routes, components and scripts: [`revenue-dashboard-ui/README.md`](revenue-dashboard-ui/README.md)
+- API setup, schema, endpoints and environment variables: [revenue-dashboard-api](https://github.com/flourine95/revenue-dashboard-api)
+- UI setup, routes, components and scripts: [revenue-dashboard-ui](https://github.com/flourine95/revenue-dashboard-ui)
