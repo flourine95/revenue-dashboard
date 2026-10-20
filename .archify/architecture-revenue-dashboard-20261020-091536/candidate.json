@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "Revenue Dashboard: runtime composition",
+    "output": ".archify/architecture-revenue-dashboard-20261020-091536/revenue-dashboard.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/flourine95/revenue-dashboard-api.git",
+      "provider": "github",
+      "link_mode": "web",
+      "revision": "bf098299af7a7a9192c3b1eda053d2e920d23455"
+    }
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser",
+      "sublabel": "dashboard and admin",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        140,
+        62
+      ]
+    },
+    {
+      "id": "nextjs",
+      "type": "frontend",
+      "label": "Next.js 16",
+      "sublabel": "port 3000",
+      "tag": "SSR + RSC",
+      "pos": [
+        250,
+        300
+      ],
+      "size": [
+        150,
+        72
+      ]
+    },
+    {
+      "id": "express",
+      "type": "backend",
+      "label": "Express 5 API",
+      "sublabel": "port 4000",
+      "tag": "Zod validated",
+      "pos": [
+        540,
+        300
+      ],
+      "size": [
+        160,
+        72
+      ],
+      "sources": [
+        {
+          "path": "src/app.ts",
+          "line": 14,
+          "end_line": 29
+        },
+        {
+          "path": "src/middleware/auth.ts",
+          "line": 12,
+          "end_line": 28
+        }
+      ]
+    },
+    {
+      "id": "limiter",
+      "type": "security",
+      "label": "Login limiter",
+      "sublabel": "in memory",
+      "tag": "429",
+      "pos": [
+        540,
+        140
+      ],
+      "size": [
+        160,
+        62
+      ],
+      "sources": [
+        {
+          "path": "src/routes/auth.ts",
+          "line": 22,
+          "end_line": 29
+        },
+        {
+          "path": "src/routes/auth.ts",
+          "line": 35,
+          "end_line": 45
+        }
+      ]
+    },
+    {
+      "id": "pg",
+      "type": "database",
+      "label": "PostgreSQL 17",
+      "sublabel": "container :5432",
+      "tag": "Prisma 7",
+      "pos": [
+        800,
+        300
+      ],
+      "size": [
+        165,
+        72
+      ],
+      "sources": [
+        {
+          "path": "src/lib/prisma.ts",
+          "line": 1,
+          "end_line": 6
+        },
+        {
+          "path": "docker-compose.yml",
+          "line": 1,
+          "end_line": 14
+        }
+      ]
+    },
+    {
+      "id": "sessions",
+      "type": "database",
+      "label": "sessions",
+      "sublabel": "hashed token",
+      "pos": [
+        540,
+        460
+      ],
+      "size": [
+        165,
+        58
+      ],
+      "sources": [
+        {
+          "path": "prisma/schema.prisma",
+          "line": 22,
+          "end_line": 33
+        },
+        {
+          "path": "src/lib/auth.ts",
+          "line": 34,
+          "end_line": 50
+        }
+      ]
+    },
+    {
+      "id": "metrics",
+      "type": "database",
+      "label": "daily_metrics",
+      "sublabel": "one row per day",
+      "pos": [
+        540,
+        600
+      ],
+      "size": [
+        165,
+        58
+      ],
+      "sources": [
+        {
+          "path": "prisma/schema.prisma",
+          "line": 35,
+          "end_line": 46
+        },
+        {
+          "path": "src/services/dashboard.ts",
+          "line": 22,
+          "end_line": 39
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Trusted server side: admin routes require a session cookie",
+      "wraps": [
+        "express",
+        "limiter",
+        "sessions",
+        "metrics"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "browser-page",
+      "from": "browser",
+      "to": "nextjs",
+      "label": "page request",
+      "variant": "emphasis"
+    },
+    {
+      "id": "nextjs-express",
+      "from": "nextjs",
+      "to": "express",
+      "label": "HTTP + forwarded cookie",
+      "variant": "emphasis"
+    },
+    {
+      "id": "browser-express",
+      "from": "browser",
+      "to": "express",
+      "label": "login and admin writes",
+      "variant": "dashed"
+    },
+    {
+      "id": "express-limiter",
+      "from": "express",
+      "to": "limiter",
+      "label": "counts failures"
+    },
+    {
+      "id": "express-pg",
+      "from": "express",
+      "to": "pg",
+      "label": "SQL via pg adapter",
+      "variant": "emphasis"
+    },
+    {
+      "id": "pg-sessions",
+      "from": "pg",
+      "to": "sessions"
+    },
+    {
+      "id": "pg-metrics",
+      "from": "pg",
+      "to": "metrics"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Why the session cookie works across ports",
+      "items": [
+        "Cookies ignore the port, so the cookie set on localhost:4000 is also visible on localhost:3000.",
+        "That lets the Next.js server forward the browser cookie instead of keeping a second copy of the session.",
+        "The solid arrows render the dashboard; the dashed arrow is the browser calling the API directly from the Next.js bundle, which needs the CORS origin to match."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Server-side sessions",
+      "items": [
+        "Login stores only a SHA-256 hash of the token; the raw token lives in an httpOnly cookie.",
+        "Logout deletes the row, so revocation is immediate. Expired rows are removed when touched.",
+        "Admin routes enforce the cookie in the API, independent of the UI."
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Two controls on sign-in",
+      "items": [
+        "One error for a wrong email and a wrong password alike, so the form does not reveal which accounts exist.",
+        "Repeated failures from one client return 429 with Retry-After; a successful sign-in clears the counter.",
+        "The counter is per process, so a restart clears it and it does not span several API instances."
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Local topology",
+      "items": [
+        "Three processes on one machine; Compose runs only the database.",
+        "The API allows one CORS origin, which is the UI origin, so both must agree.",
+        "Prisma connects through the pg driver adapter and reads its URL from config, not the schema."
+      ]
+    }
+  ]
+}

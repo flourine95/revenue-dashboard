@@ -2,7 +2,20 @@
 
 A weekly revenue dashboard for a restaurant group, built for a coding challenge. It reads data from a PostgreSQL database through an Express API and renders it in a Next.js app, with admin screens for changing the numbers.
 
+The code lives in two repositories:
+
+- **API**: [flourine95/revenue-dashboard-api](https://github.com/flourine95/revenue-dashboard-api)
+- **UI**: [flourine95/revenue-dashboard-ui](https://github.com/flourine95/revenue-dashboard-ui)
+
 The dashboard shows revenue, covers and labour for one week next to the week before. Three more tabs compare the same week last year, track the weekly budget and score the week. Annotations on the chart are events the admin creates.
+
+![Dashboard](screenshots/dashboard.png)
+
+![Insight tabs](screenshots/insight-tabs.png)
+
+![Admin](screenshots/admin.png)
+
+An interactive diagram of how the three processes fit together is in [architecture.html](architecture.html).
 
 ## Run it
 
@@ -73,14 +86,16 @@ Browser
 Next.js 16 (port 3000) ──▶ Express 5 API (port 4000) ──▶ PostgreSQL 17 (port 5432)
 ```
 
+[architecture.html](architecture.html) draws the same system with the trust boundary, the two paths out of the browser and the tables behind the API. It opens in a browser with no build step.
+
 Each application is its own repository:
 
 | Repository | Responsibility | Stack |
 | --- | --- | --- |
-| `revenue-dashboard-api` | REST API, session auth, dashboard aggregation, admin CRUD | Express 5, Prisma 7, Zod, PostgreSQL |
-| `revenue-dashboard-ui` | Dashboard, insight tabs, login, admin screens, PNG export | Next.js 16, React 19, Tailwind 4, shadcn/ui, Recharts |
+| [revenue-dashboard-api](https://github.com/flourine95/revenue-dashboard-api) | REST API, session auth, dashboard aggregation, admin CRUD | Express 5, Prisma 7, Zod, PostgreSQL |
+| [revenue-dashboard-ui](https://github.com/flourine95/revenue-dashboard-ui) | Dashboard, insight tabs, login, admin screens, PNG export | Next.js 16, React 19, Tailwind 4, shadcn/ui, Recharts |
 
-Setup, schema, endpoints and environment variables are in the [API README](https://github.com/flourine95/revenue-dashboard-api). Setup, routes and components are in the [UI README](https://github.com/flourine95/revenue-dashboard-ui).
+Setup, schema, endpoints and environment variables are in the [API README](https://github.com/flourine95/revenue-dashboard-api#setup). Setup, routes and components are in the [UI README](https://github.com/flourine95/revenue-dashboard-ui#setup).
 
 ## Tests
 

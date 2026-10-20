@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "finalize",
+  "status": "pass",
+  "type": "architecture",
+  "quality": "showcase",
+  "specification": {
+    "path": "D:\\Projects\\revenue-dashboard\\.archify\\architecture-revenue-dashboard-20261020-091536\\candidate.json",
+    "sha256": "16817f76f0fae0200faa2dff659d0cb7248abcfd998be480c411424da16ce99b",
+    "bytes": 6514
+  },
+  "artifact": {
+    "path": "D:\\Projects\\revenue-dashboard\\.archify\\architecture-revenue-dashboard-20261020-091536\\revenue-dashboard.html",
+    "sha256": "2b322e7810d22aae8e868eccd2cca3ea2b00157abb3d3c38234b08d55365b70b",
+    "bytes": 823242
+  },
+  "gates": {
+    "validate": "pass",
+    "deliver": "pass",
+    "check": "pass",
+    "browser-check": "pass"
+  },
+  "diagnostics": [],
+  "diagnosticSummary": {
+    "total": 0,
+    "shown": 0,
+    "truncated": false
+  },
+  "evidence": {
+    "receipt": "D:\\Projects\\revenue-dashboard\\.archify\\architecture-revenue-dashboard-20261020-091536\\review-2\\revenue-dashboard.finalize.json",
+    "summaryReceipt": "D:\\Projects\\revenue-dashboard\\.archify\\architecture-revenue-dashboard-20261020-091536\\review-2\\revenue-dashboard.finalize-summary.json",
+    "browserCheckReceipt": "D:\\Projects\\revenue-dashboard\\.archify\\architecture-revenue-dashboard-20261020-091536\\review-2\\revenue-dashboard.browser-check.json"
+  },
+  "update": {
+    "status": "update_available",
+    "installedVersion": "3.1.0",
+    "availableVersion": "3.2.0",
+    "releaseNotes": "https://github.com/tt-a1i/archify/releases/tag/v3.2.0",
+    "severity": "normal",
+    "checkedAt": "2026-10-19T04:36:26.910Z",
+    "source": "cache",
+    "noticeRequired": true,
+    "noticeText": "Archify update: 3.1.0 → 3.2.0. A previous check at 2026-10-19T04:36:26.910Z found a newer release. Release notes: https://github.com/tt-a1i/archify/releases/tag/v3.2.0. The installed Skill has not changed; ask to snooze or ignore this reminder.",
+    "eventKey": "archify@sha256:70e210265c59f24dcbdf2a502ff671104b5454e7ee7d3554aecd86bad32384f5"
+  },
+  "visualReview": "not-requested",
+  "durationMs": 5280
+}
