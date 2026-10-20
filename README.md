@@ -146,6 +146,8 @@ revenue-dashboard/
   revenue-dashboard-ui/   Next.js application
 ```
 
+Each application is its own git repository and is ignored by the root one. `.agents/skills/` inside the API holds the three Prisma reference skills this codebase uses; unrelated ones were removed.
+
 ## Known gaps
 
 - The selected week and active insight tab are not stored in the URL, so a reload returns to the current week.
